@@ -176,6 +176,8 @@
     });
   });
 
+  const API_BASE = ""; // same-origin; point this at the API's URL if it's hosted separately
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -183,14 +185,54 @@
       return;
     }
 
-    // No backend configured yet — simulate a successful submission.
-    successMsg.hidden = false;
-    form.reset();
+    const submitBtn = form.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
 
-    setTimeout(function () {
-      closeModal();
-      successMsg.hidden = true;
-    }, 2200);
+    const payload = {
+      fullName: form.fullName.value.trim(),
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
+      propertyAddress: form.propertyAddress.value.trim(),
+      borough: form.borough.value,
+      message: form.message.value.trim(),
+      website: form.website.value // honeypot — always empty for real visitors
+    };
+
+    fetch(API_BASE + "/api/consultation-requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) {
+        if (res.status === 400) {
+          return res.json().then(function (data) {
+            Object.keys(data.errors || {}).forEach(function (fieldId) {
+              setFieldError(fieldId, data.errors[fieldId]);
+            });
+            throw new Error("validation");
+          });
+        }
+        if (!res.ok) {
+          throw new Error("server");
+        }
+        return res.json();
+      })
+      .then(function () {
+        successMsg.hidden = false;
+        form.reset();
+        setTimeout(function () {
+          closeModal();
+          successMsg.hidden = true;
+        }, 2200);
+      })
+      .catch(function (err) {
+        if (err.message !== "validation") {
+          setFieldError("message", "Something went wrong submitting your request. Please try again or call directly.");
+        }
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+      });
   });
 
 })();
