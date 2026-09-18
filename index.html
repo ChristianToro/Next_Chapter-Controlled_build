@@ -112,44 +112,80 @@
 
   <!-- COVERAGE MAP -->
   <section id="coverage" class="section coverage-section">
-    <div class="container">
-      <h2>Coverage Area</h2>
-      <p class="section-sub">Click or tap a region below to see service details for that area.</p>
+    <div class="container coverage-inner">
 
-      <div class="coverage-layout">
+      <div class="coverage-intro">
+        <p class="coverage-eyebrow">
+          <span></span>
+          Where we work
+        </p>
 
-        <div class="map-wrap">
-          <svg viewBox="0 0 560 420" role="img" aria-labelledby="mapTitle" class="coverage-map" id="coverageMap">
-            <title id="mapTitle">Schematic map of the NYC downstate coverage area</title>
+        <h2>Close to the <em>property.</em></h2>
 
-            <!-- Westchester -->
-            <path class="region" data-region="westchester" d="M 260 40 L 380 40 L 380 130 L 260 130 Z" />
-            <!-- Rockland -->
-            <path class="region" data-region="rockland" d="M 150 60 L 250 60 L 250 140 L 150 140 Z" />
-            <!-- Bronx -->
-            <path class="region" data-region="bronx" d="M 280 140 L 370 140 L 370 210 L 280 210 Z" />
-            <!-- Manhattan -->
-            <path class="region" data-region="manhattan" d="M 260 210 L 300 210 L 290 320 L 255 320 Z" />
-            <!-- Queens -->
-            <path class="region" data-region="queens" d="M 305 215 L 420 220 L 400 300 L 300 300 Z" />
-            <!-- Brooklyn -->
-            <path class="region" data-region="brooklyn" d="M 250 300 L 360 300 L 340 380 L 260 380 Z" />
-            <!-- Staten Island -->
-            <path class="region" data-region="staten-island" d="M 150 320 L 230 320 L 230 400 L 150 400 Z" />
-            <!-- Nassau -->
-            <path class="region" data-region="nassau" d="M 400 210 L 500 210 L 500 290 L 400 290 Z" />
-            <!-- Suffolk -->
-            <path class="region" data-region="suffolk" d="M 500 180 L 555 180 L 555 300 L 500 300 Z" />
+        <p class="coverage-description">Coverage is intentionally local. Select a region to see the kind of guidance we provide there and typical response times.</p>
 
+        <div class="region-buttons" aria-label="Coverage regions">
+          <button class="region-button is-active" type="button" data-region="nyc" aria-pressed="true">
+            <span>New York City</span>
+            <span class="region-arrow">&rsaquo;</span>
+          </button>
+          <button class="region-button" type="button" data-region="westchester" aria-pressed="false">
+            <span>Westchester</span>
+            <span class="region-arrow">&rsaquo;</span>
+          </button>
+          <button class="region-button" type="button" data-region="long-island" aria-pressed="false">
+            <span>Long Island</span>
+            <span class="region-arrow">&rsaquo;</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="coverage-map">
+        <div class="map-lines" aria-hidden="true">
+          <svg viewBox="0 0 720 470" preserveAspectRatio="none">
+            <path
+              d="M15 85 C130 20 205 120 300 75 S460 35 550 100 670 80 730 30
+                 M-10 178 C105 120 184 220 270 160 S440 145 515 210 645 180 735 115
+                 M-15 290 C90 215 205 315 320 260 S490 270 575 320 680 290 740 230
+                 M25 420 C155 335 245 440 360 380 S510 370 690 430"
+            ></path>
+            <path
+              d="M130 0 C145 75 135 140 195 195 S220 310 185 480
+                 M365 -15 C340 85 390 140 350 220 S370 350 335 490
+                 M570 -20 C535 90 600 170 550 250 S560 380 530 490"
+            ></path>
           </svg>
         </div>
 
-        <aside class="map-panel" id="mapPanel" aria-live="polite">
-          <h3 id="mapPanelTitle">Select a region</h3>
-          <p id="mapPanelBody">Hover or tap any highlighted area on the map to view coverage details, typical response time, and services offered in that county or borough.</p>
-        </aside>
+        <div class="map-location location-hudson">
+          <span class="location-dot"></span>
+          <span>Hudson</span>
+        </div>
 
+        <div class="map-location location-long-island">
+          <span class="location-dot"></span>
+          <span>Long Island</span>
+        </div>
+
+        <div class="map-location location-westchester">
+          <span class="location-dot"></span>
+          <span>Westchester</span>
+        </div>
+
+        <article class="region-detail" id="mapPanel" aria-live="polite">
+          <div class="region-detail-header">
+            <div>
+              <p class="region-short" id="region-short"></p>
+              <h3 id="region-title"></h3>
+            </div>
+            <span class="map-pin" aria-hidden="true">&#8982;</span>
+          </div>
+
+          <p class="region-detail-text" id="region-detail"></p>
+          <div class="region-points" id="region-points"></div>
+        </article>
       </div>
+
     </div>
   </section>
 

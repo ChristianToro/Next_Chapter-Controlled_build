@@ -7,114 +7,75 @@
     yearEl.textContent = new Date().getFullYear();
   }
 
-  /* ---------- Coverage map ---------- */
+  /* ---------- Coverage regions ---------- */
 
   const coverageData = {
-    manhattan: {
-      name: "Manhattan",
-      response: "Same-day to 1 business day",
-      services: "Violation remediation, facade (FISP/LL11) filings, permit filings"
-    },
-    brooklyn: {
-      name: "Brooklyn",
-      response: "1 business day",
-      services: "Violation remediation, compliance audits, HPD registrations"
-    },
-    queens: {
-      name: "Queens",
-      response: "1 business day",
-      services: "Violation remediation, permit filings, inspection prep"
-    },
-    bronx: {
-      name: "Bronx",
-      response: "1 business day",
-      services: "Violation remediation, HPD registrations, compliance audits"
-    },
-    "staten-island": {
-      name: "Staten Island",
-      response: "1-2 business days",
-      services: "Compliance audits, permit filings, inspection prep"
-    },
-    nassau: {
-      name: "Nassau County",
-      response: "1-2 business days",
-      services: "Compliance audits, inspection prep, local permit filings"
-    },
-    suffolk: {
-      name: "Suffolk County",
-      response: "2-3 business days",
-      services: "Compliance audits, inspection prep"
+    nyc: {
+      name: "NYC",
+      title: "Five boroughs, one clear plan.",
+      detail: "Local guidance for owners and managers navigating filings, inspections, notices, and the city's moving compliance calendar.",
+      services: "Annual property filings, Housing maintenance standards, DHCR and HPD notices, same day response"
     },
     westchester: {
-      name: "Westchester County",
-      response: "1-2 business days",
-      services: "Compliance audits, permit filings, inspection prep"
+      name: "Westchester",
+      title: "The close-in suburbs.",
+      detail: "Practical oversight for rental homes, co-ops, and multi-family properties in Westchester County.",
+      services: "Rental property readiness, Municipal requirements, Vendor coordination, same day response"
     },
-    rockland: {
-      name: "Rockland County",
-      response: "1-2 business days",
-      services: "Compliance audits, inspection prep"
+    "long-island": {
+      name: "Long Island",
+      title: "From the North Shore to the forks.",
+      detail: "A second set of eyes on the requirements that follow a property beyond city limits.",
+      services: "Town and village filings, Pre-sale preparation, Property record review, 1-2 day response"
     }
   };
 
-  const regions = document.querySelectorAll(".region");
-  const panelTitle = document.getElementById("mapPanelTitle");
-  const panelBody = document.getElementById("mapPanelBody");
-  let selectedRegion = null;
+  const regionButtons = document.querySelectorAll(".region-button");
+  const regionDetailCard = document.getElementById("mapPanel");
+  const regionShort = document.getElementById("region-short");
+  const regionTitle = document.getElementById("region-title");
+  const regionDetailText = document.getElementById("region-detail");
+  const regionPoints = document.getElementById("region-points");
 
-  function showRegion(el) {
-    const key = el.getAttribute("data-region");
-    const data = coverageData[key];
-    if (!data) return;
-
-    if (selectedRegion) {
-      selectedRegion.classList.remove("is-selected");
-    }
-    el.classList.add("is-selected");
-    selectedRegion = el;
-
-    panelTitle.textContent = data.name;
-    panelBody.innerHTML =
-      '<span class="panel-meta">Typical response: ' + data.response + "</span><br><br>" +
-      data.services;
+  function renderRegion(data) {
+    regionShort.textContent = data.name;
+    regionTitle.textContent = data.title;
+    regionDetailText.textContent = data.detail;
+    regionPoints.innerHTML = data.services
+      .split(", ")
+      .map(function (point) { return "<span>✓ " + point + "</span>"; })
+      .join("");
   }
 
-  regions.forEach(function (region) {
-    region.setAttribute("tabindex", "0");
-    region.setAttribute("role", "button");
-
-    region.addEventListener("click", function () {
-      showRegion(region);
+  function selectRegion(regionId) {
+    regionButtons.forEach(function (button) {
+      const isSelected = button.getAttribute("data-region") === regionId;
+      button.classList.toggle("is-active", isSelected);
+      button.setAttribute("aria-pressed", String(isSelected));
     });
+  }
 
-    region.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        showRegion(region);
-      }
-    });
+  function updateRegion(regionId) {
+    const data = coverageData[regionId];
+    if (!data) return;
 
-    region.addEventListener("mouseenter", function () {
-      const key = region.getAttribute("data-region");
-      const data = coverageData[key];
-      if (data) {
-        panelTitle.textContent = data.name;
-        panelBody.innerHTML =
-          '<span class="panel-meta">Typical response: ' + data.response + "</span><br><br>" +
-          data.services;
-      }
-    });
+    regionDetailCard.classList.add("is-changing");
+    selectRegion(regionId);
 
-    region.addEventListener("mouseleave", function () {
-      if (selectedRegion) {
-        showRegion(selectedRegion);
-      } else {
-        panelTitle.textContent = "Select a region";
-        panelBody.textContent =
-          "Hover or tap any highlighted area on the map to view coverage details, typical response time, and services offered in that county or borough.";
-      }
+    setTimeout(function () {
+      renderRegion(data);
+      regionDetailCard.classList.remove("is-changing");
+    }, 160);
+  }
+
+  regionButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      updateRegion(button.getAttribute("data-region"));
     });
   });
+
+  renderRegion(coverageData.nyc);
+  selectRegion("nyc");
 
   /* ---------- Modal ---------- */
 
