@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A single-page marketing/landing site for a NY Residential Property Compliance Specialist. The frontend is three flat files at the repo root — there is no build step, package manager, bundler, framework, or test suite:
+A single-page marketing/landing site for a NY Residential Property Compliance Specialist. The frontend is three flat files at the repo root — there is no build step, bundler, or framework, and none of that is needed to run the site itself:
 
 - `index.html` — all page markup and content, in document order: header/nav, hero, bio section (`#bio`), services section (`#services`), coverage-area map section (`#coverage`), CTA section, footer, and the (initially `hidden`) contact modal at the bottom of `<body>`.
 - `styles.css` — single stylesheet, organized in the same top-to-bottom order as the HTML sections, using CSS custom properties defined on `:root` for colors/spacing. One responsive breakpoint at `max-width: 760px` near the end of the file.
@@ -26,6 +26,14 @@ To sanity-check syntax without a browser:
 node -c app.js
 python3 -c "import html.parser; html.parser.HTMLParser().feed(open('index.html').read())"
 ```
+
+## Testing
+
+The consultation form has a real test suite, split across two independent `package.json`s — this is the one exception to "no package manager" above, and exists only for testing, not for running the site:
+
+- **Frontend** (`test/*.test.js`): unit/integration tests for `app.js`'s client-side validation and submit handler, using Node's built-in test runner (`node:test`) plus `jsdom` to load the real `index.html`/`app.js` and drive them like a browser would (fill fields, dispatch `submit`/`blur`, mock `fetch`, assert on DOM state). `jsdom` is the one dev dependency, declared in the root `package.json`. Run once: `npm install`, then `npm test`.
+- **Backend** (`server/test/*.test.js`): unit tests for `server/validate.js` and integration tests for `POST /api/consultation-requests` (validation errors, the honeypot, persistence, rate limiting), using only `node:test` and native `fetch` against the exported Express `app` on an ephemeral port with a throwaway SQLite file — no new dependencies. Run from `server/`: `npm test`. `server/rateLimit.js` exports `resetRateLimit()` and `server/index.js` exports the `app` (guarded by `require.main === module` so `npm start` behavior is unchanged) specifically so tests can reset state and drive the app in-process.
+- `npm test` from the repo root runs both suites together (`node --test test/*.test.js server/test/*.test.js`).
 
 ## Architecture notes
 

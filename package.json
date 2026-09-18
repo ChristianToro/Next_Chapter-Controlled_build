@@ -1,0 +1,10 @@
+{
+  "name": "northline-compliance-site",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/*.test.js server/test/*.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}

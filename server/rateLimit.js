@@ -19,4 +19,8 @@ function rateLimit(req, res, next) {
   next();
 }
 
-module.exports = { rateLimit };
+function resetRateLimit() {
+  hits.clear();
+}
+
+module.exports = { rateLimit, resetRateLimit };

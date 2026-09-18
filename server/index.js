@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const consultationsRouter = require("./routes/consultations");
 const { rateLimit } = require("./rateLimit");
 
@@ -18,7 +19,25 @@ if (process.env.ALLOWED_ORIGIN) {
 
 app.use("/api", rateLimit, consultationsRouter);
 
-const port = process.env.PORT || 3001;
-app.listen(port, function () {
-  console.log("API listening on port " + port);
+// Serve the static site from the same origin as the API, so the form's
+// same-origin fetch to /api/... works without CORS. Only the site's own files
+// are exposed — never server/, its SQLite data, or repo docs.
+const siteRoot = path.join(__dirname, "..");
+app.get("/", function (req, res) {
+  res.sendFile(path.join(siteRoot, "index.html"));
 });
+["index.html", "app.js", "styles.css"].forEach(function (file) {
+  app.get("/" + file, function (req, res) {
+    res.sendFile(path.join(siteRoot, file));
+  });
+});
+app.use("/assets", express.static(path.join(siteRoot, "assets")));
+
+module.exports = app;
+
+if (require.main === module) {
+  const port = process.env.PORT || 3001;
+  app.listen(port, function () {
+    console.log("API listening on port " + port);
+  });
+}
