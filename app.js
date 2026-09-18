@@ -53,6 +53,8 @@
       button.classList.toggle("is-active", isSelected);
       button.setAttribute("aria-pressed", String(isSelected));
     });
+
+    regionDetailCard.classList.toggle("detail-top-left", regionId === "long-island");
   }
 
   function updateRegion(regionId) {
