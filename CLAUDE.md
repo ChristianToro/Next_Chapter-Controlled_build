@@ -1,0 +1,32 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+A single-page marketing/landing site for a NY Residential Property Compliance Specialist. The entire site is three flat files at the repo root — there is no build step, package manager, bundler, framework, or test suite:
+
+- `index.html` — all page markup and content, in document order: header/nav, hero, bio section (`#bio`), services section (`#services`), coverage-area map section (`#coverage`), CTA section, footer, and the (initially `hidden`) contact modal at the bottom of `<body>`.
+- `styles.css` — single stylesheet, organized in the same top-to-bottom order as the HTML sections, using CSS custom properties defined on `:root` for colors/spacing. One responsive breakpoint at `max-width: 760px` near the end of the file.
+- `app.js` — vanilla JS wrapped in a single IIFE, no modules/imports. No dependencies, no plugins, no external libraries — keep it that way; any new interactivity must stay hand-rolled vanilla JS.
+
+## Running / previewing
+
+There is no dev server or build command. Open `index.html` directly in a browser, or serve the directory with any static file server, e.g.:
+
+```
+python3 -m http.server
+```
+
+To sanity-check syntax without a browser:
+
+```
+node -c app.js
+python3 -c "import html.parser; html.parser.HTMLParser().feed(open('index.html').read())"
+```
+
+## Architecture notes
+
+- **Coverage map is hand-drawn, not a real map.** The `#coverage` section renders an inline `<svg>` (`#coverageMap`) with one `<path class="region" data-region="...">` per borough/county (schematic rectangles, not traced geography). `app.js` keys a `coverageData` object by the same `data-region` values (`manhattan`, `brooklyn`, `queens`, `bronx`, `staten-island`, `nassau`, `suffolk`, `westchester`, `rockland`) holding `name`, `response`, and `services` text shown in the `#mapPanel` side panel on hover/click/keyboard (Enter/Space) activation. Adding or renaming a region requires updating both the SVG `data-region` attribute and the matching key in `coverageData` — they will silently no-op if they drift out of sync.
+- **Modal is a single reusable overlay**, not per-button markup. Any element with `data-open-modal` opens `#modalOverlay` (currently the nav button, hero CTA, and bottom CTA button). Close paths: `#modalClose` click, backdrop click, and `Escape` — all handled in `app.js`, along with focus return to the triggering element.
+- **Form validation is entirely client-side and submission is mocked.** `consultForm` in `app.js` validates `fullName`, `email`, `propertyAddress`, and `message` as required (plus an email-format regex), writes errors into the paired `#err-<fieldId>` span, and on success just reveals `#formSuccess` and resets the form after a timeout — there is no backend endpoint wired up. If you add one, replace the `setTimeout` mock in the `submit` handler with an actual fetch/POST.

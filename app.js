@@ -2,14 +2,14 @@
   "use strict";
 
   /* ---------- Footer year ---------- */
-  var yearEl = document.getElementById("year");
+  const yearEl = document.getElementById("year");
   if (yearEl) {
     yearEl.textContent = new Date().getFullYear();
   }
 
   /* ---------- Coverage map ---------- */
 
-  var coverageData = {
+  const coverageData = {
     manhattan: {
       name: "Manhattan",
       response: "Same-day to 1 business day",
@@ -57,14 +57,14 @@
     }
   };
 
-  var regions = document.querySelectorAll(".region");
-  var panelTitle = document.getElementById("mapPanelTitle");
-  var panelBody = document.getElementById("mapPanelBody");
-  var selectedRegion = null;
+  const regions = document.querySelectorAll(".region");
+  const panelTitle = document.getElementById("mapPanelTitle");
+  const panelBody = document.getElementById("mapPanelBody");
+  let selectedRegion = null;
 
   function showRegion(el) {
-    var key = el.getAttribute("data-region");
-    var data = coverageData[key];
+    const key = el.getAttribute("data-region");
+    const data = coverageData[key];
     if (!data) return;
 
     if (selectedRegion) {
@@ -95,8 +95,8 @@
     });
 
     region.addEventListener("mouseenter", function () {
-      var key = region.getAttribute("data-region");
-      var data = coverageData[key];
+      const key = region.getAttribute("data-region");
+      const data = coverageData[key];
       if (data) {
         panelTitle.textContent = data.name;
         panelBody.innerHTML =
@@ -118,18 +118,18 @@
 
   /* ---------- Modal ---------- */
 
-  var overlay = document.getElementById("modalOverlay");
-  var openTriggers = document.querySelectorAll("[data-open-modal]");
-  var closeBtn = document.getElementById("modalClose");
-  var form = document.getElementById("consultForm");
-  var successMsg = document.getElementById("formSuccess");
-  var lastFocusedEl = null;
+  const overlay = document.getElementById("modalOverlay");
+  const openTriggers = document.querySelectorAll("[data-open-modal]");
+  const closeBtn = document.getElementById("modalClose");
+  const form = document.getElementById("consultForm");
+  const successMsg = document.getElementById("formSuccess");
+  let lastFocusedEl = null;
 
   function openModal() {
     lastFocusedEl = document.activeElement;
     overlay.hidden = false;
     document.body.style.overflow = "hidden";
-    var firstField = document.getElementById("fullName");
+    const firstField = document.getElementById("fullName");
     if (firstField) firstField.focus();
     document.addEventListener("keydown", onKeydown);
   }
@@ -161,13 +161,13 @@
 
   /* ---------- Form validation ---------- */
 
-  var requiredFields = ["fullName", "email", "propertyAddress", "message"];
-  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const requiredFields = ["fullName", "email", "propertyAddress", "message"];
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   function setFieldError(fieldId, message) {
-    var input = document.getElementById(fieldId);
-    var errorEl = document.getElementById("err-" + fieldId);
-    var row = input.closest(".form-row");
+    const input = document.getElementById(fieldId);
+    const errorEl = document.getElementById("err-" + fieldId);
+    const row = input.closest(".form-row");
 
     if (message) {
       row.classList.add("has-error");
@@ -179,11 +179,11 @@
   }
 
   function validateForm() {
-    var isValid = true;
+    let isValid = true;
 
     requiredFields.forEach(function (fieldId) {
-      var input = document.getElementById(fieldId);
-      var value = input.value.trim();
+      const input = document.getElementById(fieldId);
+      const value = input.value.trim();
 
       if (!value) {
         setFieldError(fieldId, "This field is required.");
@@ -200,9 +200,9 @@
   }
 
   ["fullName", "email", "propertyAddress", "message"].forEach(function (fieldId) {
-    var input = document.getElementById(fieldId);
+    const input = document.getElementById(fieldId);
     input.addEventListener("blur", function () {
-      var value = input.value.trim();
+      const value = input.value.trim();
       if (!value) {
         setFieldError(fieldId, "This field is required.");
       } else if (fieldId === "email" && !emailPattern.test(value)) {
